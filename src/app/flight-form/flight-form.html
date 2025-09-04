@@ -1,0 +1,10 @@
+<form [formGroup]="flightForm" (ngSubmit)="submit()">
+  <input formControlName="airline" placeholder="Airline" />
+  <input formControlName="arrivalDate" type="date" />
+  <input formControlName="arrivalTime" type="time" />
+  <input formControlName="flightNumber" placeholder="Flight Number" />
+  <input formControlName="numOfGuests" type="number" min="1" />
+  <textarea formControlName="comments" placeholder="Comments (optional)"></textarea>
+  <button type="submit">Submit</button>
+</form>
+<p>{{ message }}</p>

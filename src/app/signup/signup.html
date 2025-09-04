@@ -1,0 +1,614 @@
+<!-- signup.html -->
+<div class="login-container">
+  <div class="login-card">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <img src="/monsterrg.webp" alt="Monster Reservations Group" class="logo">
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'signin'"
+        (click)="activeTab = 'signin'; clearMessage()">
+        Sign In
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'signup'"
+        (click)="activeTab = 'signup'; clearMessage()">
+        Sign Up
+      </button>
+    </div>
+
+    <!-- Message Display -->
+    <div class="message" *ngIf="message" [class]="messageType">
+      {{ message }}
+    </div>
+
+    <!-- Sign In Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'signin'">
+      <h2 class="form-title">Welcome Back!</h2>
+      <p class="form-subtitle">Sign in to access your account</p>
+
+      <form (ngSubmit)="loginWithEmail()" #signinForm="ngForm">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input 
+            type="email" 
+            id="email"
+            name="email"
+            [(ngModel)]="email" 
+            required
+            email
+            placeholder="Enter your email"
+            class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-with-icon">
+            <input 
+              [type]="showSignInPassword ? 'text' : 'password'"
+              id="password"
+              name="password"
+              [(ngModel)]="password" 
+              required
+              placeholder="Enter your password"
+              class="form-input password-field">
+            <span 
+              class="eye-icon"
+              [class.visible]="showSignInPassword"
+              (click)="toggleSignInPassword()">
+            </span>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="rememberMe"
+              name="rememberMe">
+            <span class="checkmark"></span>
+            Remember me
+          </label>
+          <button type="button" class="forgot-link" (click)="forgotPassword()">
+            Forgot Password?
+          </button>
+        </div>
+
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="isLoading || signinForm.invalid">
+          <span *ngIf="isLoading" class="spinner"></span>
+          {{ isLoading ? 'Signing In...' : 'Sign In' }}
+        </button>
+      </form>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <button 
+        type="button" 
+        class="btn btn-google" 
+        (click)="loginWithGoogle()"
+        [disabled]="isLoading">
+        <img 
+          src="./googleicon.webp" 
+          alt="Google icon" 
+          class="google-icon" style="width: 20px; height: 20px; margin-right: 8px;" 
+        />
+        Continue with Google
+      </button>
+    </div>
+
+    <!-- Sign Up Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'signup'">
+      <h2 class="form-title">Create Account</h2>
+      <p class="form-subtitle">Join Monster Reservations Group today</p>
+
+      <form (ngSubmit)="signupWithEmail()" #signupForm="ngForm">
+        <div class="form-group">
+          <label for="signupEmail">Email Address</label>
+          <input 
+            type="email" 
+            id="signupEmail"
+            name="signupEmail"
+            [(ngModel)]="signupEmail" 
+            required
+            email
+            placeholder="Enter your email"
+            class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <div class="input-with-icon">
+            <input 
+              [type]="showSignUpPassword ? 'text' : 'password'"
+              id="signupPassword"
+              name="signupPassword"
+              [(ngModel)]="signupPassword" 
+              required
+              minlength="6"
+              placeholder="Create a password (min. 6 characters)"
+              class="form-input password-field">
+            <span 
+              class="eye-icon"
+              [class.visible]="showSignUpPassword"
+              (click)="toggleSignUpPassword()">
+            </span>
+          </div>
+          <div class="password-requirements">
+            <small>Password must be at least 6 characters long</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="input-with-icon">
+            <input 
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              id="confirmPassword"
+              name="confirmPassword"
+              [(ngModel)]="confirmPassword" 
+              required
+              placeholder="Confirm your password"
+              class="form-input password-field">
+            <span 
+              class="eye-icon"
+              [class.visible]="showConfirmPassword"
+              (click)="toggleConfirmPassword()">
+            </span>
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="isLoading || signupForm.invalid">
+          <span *ngIf="isLoading" class="spinner"></span>
+          {{ isLoading ? 'Creating Account...' : 'Create Account' }}
+        </button>
+      </form>
+
+      <div class="divider">
+        <span>OR</span>
+      </div>
+
+      <button 
+        type="button" 
+        class="btn btn-google" 
+        (click)="loginWithGoogle()"
+        [disabled]="isLoading">
+        <img 
+          src="./googleicon.webp" 
+          alt="Google icon" 
+          class="google-icon" style="width: 20px; height: 20px; margin-right: 8px;" 
+        />
+        Sign up with Google
+      </button>
+    </div>
+
+    <!-- Forgot Password Tab -->
+    <div class="tab-content" *ngIf="activeTab === 'forgot'">
+      <h2 class="form-title">Reset Password</h2>
+      <p class="form-subtitle">Enter your email to receive a password reset link</p>
+
+      <form (ngSubmit)="sendPasswordReset()" #forgotForm="ngForm">
+        <div class="form-group">
+          <label for="forgotEmail">Email Address</label>
+          <input 
+            type="email" 
+            id="forgotEmail"
+            name="forgotEmail"
+            [(ngModel)]="forgotEmail" 
+            required
+            email
+            placeholder="Enter your email address"
+            class="form-input">
+        </div>
+
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="isLoading || forgotForm.invalid">
+          <span *ngIf="isLoading" class="spinner"></span>
+          {{ isLoading ? 'Sending Reset Email...' : 'Send Reset Email' }}
+        </button>
+      </form>
+
+      <div class="back-to-signin">
+        <button type="button" class="back-link" (click)="backToSignIn()">
+          ← Back to Sign In
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+  }
+
+  .login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    animation: slideUp 0.6s ease-out;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .logo-section {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .logo {
+    max-width: 120px;
+    height: auto;
+  }
+
+  .tab-navigation {
+    display: flex;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f1f3f4;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.3s ease;
+  }
+
+  .tab-btn.active {
+    background: #2e8b57;
+    color: white;
+  }
+
+  .tab-btn:hover:not(.active) {
+    background: #e8f5e8;
+    color: #2e8b57;
+  }
+
+  .message {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .message.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+
+  .message.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+
+  .form-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .form-subtitle {
+    color: #666;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    box-sizing: border-box;
+  }
+
+  /* Additional CSS to hide browser password toggles */
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear {
+    display: none !important;
+  }
+  
+  input[type="password"]::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+    height: 0;
+    width: 0;
+    margin: 0;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: #2e8b57;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.1);
+  }
+
+  .form-input.ng-invalid.ng-touched {
+    border-color: #dc3545;
+    background: #fff5f5;
+  }
+
+  /* Password Requirements */
+  .password-requirements {
+    margin-top: 5px;
+  }
+
+  .password-requirements small {
+    color: #666;
+    font-size: 0.8rem;
+  }
+
+  /* Password Input with Icon */
+  .input-with-icon {
+    position: relative;
+  }
+
+  .password-field {
+    padding-right: 45px !important;
+  }
+
+  .eye-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    transition: all 0.2s ease;
+    border-radius: 50%;
+    background: transparent;
+  }
+
+  .eye-icon:hover {
+    background: rgba(0,0,0,0.1);
+  }
+
+  /* SVG Eye Icon - Closed (Default) */
+  .eye-icon::before {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21'/%3E%3C/svg%3E") no-repeat center;
+    background-size: contain;
+    opacity: 0.6;
+  }
+
+  /* SVG Eye Icon - Open (When visible) */
+  .eye-icon.visible::before {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232e8b57'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'/%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'/%3E%3C/svg%3E") no-repeat center;
+    background-size: contain;
+    opacity: 1;
+  }
+
+  .eye-icon:hover::before {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #666;
+  }
+
+  .checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+  }
+
+  .forgot-link {
+    background: none;
+    border: none;
+    color: #2e8b57;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: underline;
+  }
+
+  .forgot-link:hover {
+    color: #228b22;
+  }
+
+  /* Back to Sign In */
+  .back-to-signin {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .back-link {
+    background: none;
+    border: none;
+    color: #2e8b57;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .back-link:hover {
+    color: #228b22;
+    text-decoration: underline;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: #2e8b57;
+    color: white;
+    margin-bottom: 20px;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: #228b22;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(46, 139, 87, 0.4);
+  }
+
+  .btn-google {
+    background: white;
+    color: #333;
+    border: 2px solid #e1e5e9;
+  }
+
+  .btn-google:hover:not(:disabled) {
+    background: #f8f9fa;
+    border-color: #d1d5db;
+  }
+
+  .google-icon {
+    font-size: 1.2rem;
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .divider {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  .divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e1e5e9;
+    z-index: 1;
+  }
+
+  .divider span {
+    background: white;
+    padding: 0 15px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 480px) {
+    .login-container {
+      padding: 10px;
+    }
+
+    .login-card {
+      padding: 30px 20px;
+    }
+
+    .form-title {
+      font-size: 1.5rem;
+    }
+
+    .tab-btn {
+      padding: 10px 15px;
+      font-size: 0.9rem;
+    }
+  }
+</style>
