@@ -1,23 +1,52 @@
-import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import firebase from 'firebase/compat/app';
+import { Injectable, inject, signal } from '@angular/core';
+import { Auth, User, authState, signOut } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
+@Injectable({ 
+  providedIn: 'root' 
 })
 export class AuthService {
-  user$: Observable<firebase.User | null>;
+  private auth = inject(Auth);
+  
+  // Signal for reactive UI updates
+  user = signal<User | null>(null);
+  
+  // Observable for guards and reactive programming
+  public authState$: Observable<User | null>;
 
-  constructor(private afAuth: AngularFireAuth) {
-    this.user$ = afAuth.authState;
+  constructor() {
+    console.log('🚀 AuthService: Initializing with Angular Fire...');
+    
+    // Use Angular Fire's authState observable
+    this.authState$ = authState(this.auth);
+    
+    // Subscribe to auth state changes and update signal
+    this.authState$.subscribe(user => {
+      console.log('🔔 AuthService: Auth state changed:', user ? `User: ${user.email}` : 'No user');
+      this.user.set(user);
+    });
   }
 
-  loginWithGoogle() {
-    return this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  get currentUser() {
+    return this.user();
   }
 
   logout() {
-    return this.afAuth.signOut();
+    console.log('🚪 AuthService: Logging out');
+    return signOut(this.auth);
+  }
+
+  isLoggedIn() {
+    return !!this.user();
+  }
+
+  // For compatibility with existing code
+  waitForAuthState(): Promise<User | null> {
+    return new Promise((resolve) => {
+      const subscription = this.authState$.subscribe((user) => {
+        subscription.unsubscribe();
+        resolve(user);
+      });
+    });
   }
 }

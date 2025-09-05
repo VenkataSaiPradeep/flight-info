@@ -22,5 +22,5 @@ bootstrapApplication(App, {
     provideAuth(() => getAuth()),
      provideRouter(routes)
   ]
-});
+}).catch(err => console.error(err));
 

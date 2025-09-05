@@ -13,6 +13,7 @@ import {
   browserSessionPersistence,
   browserLocalPersistence
 } from '@angular/fire/auth';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ import {
 export class Login {
   private router = inject(Router);
   private auth = inject(Auth);
+  private returnUrl = '';
 
   // Tabs
   activeTab: 'signin' | 'signup' | 'forgot' = 'signin';
@@ -48,6 +50,7 @@ export class Login {
   constructor() {
     // Load remembered email on component init
     this.loadRememberedEmail();
+    this.returnUrl = inject(ActivatedRoute).snapshot.queryParams['returnUrl'] || '/flight-form';
   }
 
   // Toggle methods for password visibility
@@ -118,7 +121,7 @@ export class Login {
       // Successful login
       this.showMessage('Login successful!', 'success');
       // Navigate only after success
-      this.router.navigate(['/flight-form']);
+       this.router.navigateByUrl(this.returnUrl);
     } catch (error: any) {
       this.showMessage('Login failed: ' + this.getFirebaseErrorMessage(error), 'error');
     } finally {
@@ -149,7 +152,7 @@ export class Login {
     try {
       await createUserWithEmailAndPassword(this.auth, this.signupEmail, this.signupPassword);
       this.showMessage('Account created successfully!', 'success');
-      this.router.navigate(['/flight-form']);
+       this.router.navigateByUrl(this.returnUrl);
     } catch (error: any) {
       this.showMessage('Signup failed: ' + this.getFirebaseErrorMessage(error), 'error');
     } finally {
@@ -174,7 +177,7 @@ export class Login {
       this.handleRememberMe();
       
       this.showMessage('Google login successful!', 'success');
-      this.router.navigate(['/flight-form']);
+       this.router.navigateByUrl(this.returnUrl);
     } catch (error: any) {
       this.showMessage('Google login failed: ' + this.getFirebaseErrorMessage(error), 'error');
     } finally {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup, AbstractControl, ValidationErrors } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../services/auth';
+import { Router } from '@angular/router';
 
 interface FlightInfoPayload {
   airline: string;
@@ -778,6 +779,45 @@ export class CustomValidators {
       }
     }
 
+    .top-logo {
+    position: absolute;
+    top: 15px; /* Reduced from 30px */
+    left: 15px; /* Reduced from 30px */
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 10px 15px; /* Reduced padding */
+    border-radius: 8px; /* Slightly smaller border radius */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  }
+  
+  .header-logo {
+    max-width: 80px; /* Reduced from 120px */
+    height: auto;
+  }
+
+  /* Adjust form header to provide more space at the top */
+  .form-header {
+    padding: 60px 20px 30px; /* Increased top padding to avoid overlap */
+  }
+
+  /* Reduce airplane icon size on mobile */
+  .header-icon {
+    font-size: 36px; /* Reduced from 48px */
+    margin-bottom: 10px; /* Reduced margin */
+  }
+
+  /* Ensure the airplane animation stays within bounds */
+  @keyframes plane {
+    0%, 100% { 
+      transform: rotate(-15deg) translateX(0); 
+    }
+    50% { 
+      transform: rotate(-15deg) translateX(5px); /* Reduced movement from 10px */
+    }
+  }
+
+
+
     @media (max-width: 480px) {
       .flight-form-container {
         margin: 0 10px;
@@ -811,6 +851,64 @@ export class CustomValidators {
       pointer-events: none;
       opacity: 0.8;
     }
+    .top-logo {
+    top: 10px;
+    left: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+  }
+  
+  .header-logo {
+    max-width: 30px; /* Even smaller for very small screens */
+  }
+
+  .form-header {
+    padding: 70px 15px 25px; /* Even more top padding for smallest screens */
+  }
+
+  .header-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .form-title {
+    font-size: 22px; /* Slightly smaller title */
+  }
+
+  .form-subtitle {
+    font-size: 14px; /* Smaller subtitle */
+  }
+
+
+/* Landscape orientation on small devices */
+@media (max-width: 768px) and (orientation: landscape) {
+  .top-logo {
+    top: 10px;
+    left: 10px;
+    padding: 8px 12px;
+  }
+  
+  .header-logo {
+    max-width: 60px; /* Smaller in landscape to save space */
+  }
+
+  .form-header {
+    padding: 50px 20px 20px; /* Reduced padding in landscape */
+  }
+
+  .header-icon {
+    font-size: 28px;
+    margin-bottom: 5px;
+  }
+
+  .form-title {
+    font-size: 20px;
+  }
+
+  .form-subtitle {
+    font-size: 13px;
+  }
+}
   `]
 })
 export class FlightForm {
