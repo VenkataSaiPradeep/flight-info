@@ -1,6 +1,7 @@
 # FlightInfo
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.1.
+Live Link: [https://flight-info-challenge-a7869.web.app]
 
 ## Development server
 
